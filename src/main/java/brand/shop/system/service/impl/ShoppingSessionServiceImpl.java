@@ -1,8 +1,6 @@
 package brand.shop.system.service.impl;
 
 import brand.shop.system.dto.*;
-import brand.shop.system.errors.ProductAmountNotEnoughException;
-import brand.shop.system.errors.UserNotFoundException;
 import brand.shop.system.helper.AppCode;
 import brand.shop.system.helper.AppMessage;
 import brand.shop.system.helper.DateUtil;
@@ -135,8 +133,6 @@ public class ShoppingSessionServiceImpl implements ShoppingSessionService {
         if(SecurityContextHolder.getContext().getAuthentication().getPrincipal()
                 instanceof UserDto userDto){
             shoppingSession.setUser(UserCustomMapper.toEntityWithId(userDto));
-        }else {
-                throw new UserNotFoundException("Can not find user during shopping session");
         }
         return shoppingSession;
     }
@@ -145,12 +141,6 @@ public class ShoppingSessionServiceImpl implements ShoppingSessionService {
 
         for (CartItemDto item : list) {
             ProductDto productDto = productService.getProduct(item.getProduct().getId()).getData();
-            if(productDto.getAmount() < item.getAmount())
-                throw new ProductAmountNotEnoughException(
-                        String.format("Customer ordered %d %s, but left only %d",
-                                item.getAmount(),
-                                productDto.getName(),
-                                productDto.getAmount()));
 
             productDto.setAmount(productDto.getAmount() - item.getAmount());
             productService.updateProduct(productDto);
