@@ -120,7 +120,7 @@ public class ShoppingSessionServiceImpl implements ShoppingSessionService {
         };
 
         Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.MINUTE, 2);
+        calendar.add(Calendar.MINUTE, 10);
 
         Timer timer = new Timer();
         timer.schedule(timerTask, calendar.getTime());
