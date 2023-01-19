@@ -55,6 +55,12 @@ public class UserServiceImpl implements UserService {
     public ResponseDto<String> registerUserCustomer(UserDto userDto) {
         try {
 
+            if(userRepository.findByEmail(userDto.getEmail()).isPresent())
+                return ResponseDto.<String>builder().code(AppCode.ERROR)
+                        .message("This email already exists!")
+                        .status(false)
+                        .build();
+
             userDto.setCreatedAt(DateUtil.getCurrentDate());
 
             User user = setAdditionalFields(userDto);
@@ -81,8 +87,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDto<String> registerUserAdmin(UserDto userDto) {
         try {
+
+            if(userRepository.findByEmail(userDto.getEmail()).isPresent())
+                return ResponseDto.<String>builder().code(AppCode.ERROR)
+                        .message("This email already exists!")
+                        .status(false)
+                        .build();
+
             userDto.setCreatedAt(DateUtil.getCurrentDate());
             User user = setAdditionalFields(userDto);
+            user.setPassword(encoder.encode(user.getPassword()));
+
 
             userRepository.save(user);
 
@@ -144,10 +159,11 @@ public class UserServiceImpl implements UserService {
         try {
             if(!userRepository.existsById(id))
                 return ResponseDto.buildResponse(false, AppCode.NOT_FOUND, AppMessage.NOT_FOUND, false);
-
+            confirmationService.deleteConfirmationByUserId(id);
             userRepository.deleteById(id);
             return ResponseDto.buildResponse(true, AppCode.OK, AppMessage.OK, true);
         }catch (Exception e){
+            e.printStackTrace();
             log.error("Error while deleting user by id !!!");
             return ResponseDto.buildResponse(false, AppCode.ERROR, AppMessage.ERROR, false);
         }

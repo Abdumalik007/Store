@@ -12,4 +12,6 @@ public interface ConfirmationService {
     ConfirmationToken getConfirmationByToken(String token);
 
     void setConfirmationTime(LocalDateTime date, String token);
+
+    void deleteConfirmationByUserId(Integer userId);
 }

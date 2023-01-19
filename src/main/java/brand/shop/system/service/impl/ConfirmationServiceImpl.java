@@ -55,5 +55,15 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         }
     }
 
+    @Override
+    public void deleteConfirmationByUserId(Integer userId) {
+        try {
+            confirmationTokenRepository.deleteByUserId(userId);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("Error while deleting confirmation token by user id !!!");
+        }
+    }
+
 
 }
